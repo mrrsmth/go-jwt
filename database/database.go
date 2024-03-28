@@ -29,6 +29,7 @@ func InitDatabase() (err error) {
 		config["DATABASE_HOST"],
 		config["DB_DATABASE"],
 	)
+	fmt.Println(dsn)
 	// Create the connection and store it in the GlobalDB variable
 	GlobalDB, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
