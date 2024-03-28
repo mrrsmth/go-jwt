@@ -21,6 +21,8 @@ func InitDatabase() (err error) {
 	if err != nil {
 		log.Fatal("Error reading .env file")
 	}
+
+	fmt.Println("config", config)
 	// Create the data source name (DSN) using the environment variables
 	dsn := fmt.Sprintf(
 		"%s:%s@(%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",

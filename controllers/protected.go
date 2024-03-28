@@ -8,18 +8,21 @@ import (
 	"gorm.io/gorm"
 )
 
-// Profile is a controller function that retrieves the user profile from the database
-// based on the email provided in the authorization middleware.
-// It returns a 404 status code if the user is not found,
-// and a 500 status code if an error occurs while retrieving the user profile.
-
 func Profile(c *gin.Context) {
-	// Initialize a user model
-	var user models.User
 	// Get the email from the authorization middleware
-	email, _ := c.Get("email")
+	email, exists := c.Get("email")
+	if !exists {
+		c.JSON(401, gin.H{
+			"Error": "Unauthorized",
+		})
+		c.Abort()
+		return
+	}
+
 	// Query the database for the user
+	var user models.User
 	result := database.GlobalDB.Where("email = ?", email.(string)).First(&user)
+
 	// If the user is not found, return a 404 status code
 	if result.Error == gorm.ErrRecordNotFound {
 		c.JSON(404, gin.H{
@@ -28,6 +31,7 @@ func Profile(c *gin.Context) {
 		c.Abort()
 		return
 	}
+
 	// If an error occurs while retrieving the user profile, return a 500 status code
 	if result.Error != nil {
 		c.JSON(500, gin.H{
@@ -36,8 +40,10 @@ func Profile(c *gin.Context) {
 		c.Abort()
 		return
 	}
+
 	// Set the user's password to an empty string
 	user.Password = ""
+
 	// Return the user profile with a 200 status code
 	c.JSON(200, user)
 }
