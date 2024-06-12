@@ -25,7 +25,6 @@ func main() {
 	// Set up the router
 	r := setupRouter()
 	// Start the server
-	1
 	r.Run(":8081")
 }
 
